@@ -10,4 +10,5 @@ public interface FileSyncManager {
 	public void updateFile(File localFile) throws IOException;
 
 	public void deleteFile(File localFile) throws IOException;
+
 }

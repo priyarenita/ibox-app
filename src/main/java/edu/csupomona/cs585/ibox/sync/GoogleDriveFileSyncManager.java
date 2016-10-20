@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.Drive.Files.List;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -13,7 +14,7 @@ import com.google.api.services.drive.model.FileList;
 public class GoogleDriveFileSyncManager implements FileSyncManager {
 
 	//Google Drive service
-	public Drive service;
+	public  Drive service;
 
 	public GoogleDriveFileSyncManager(Drive service) {
 		this.service = service;
@@ -67,5 +68,26 @@ public class GoogleDriveFileSyncManager implements FileSyncManager {
 		}
 		return null;
 	}
+	
+	 public java.util.List<File> retrieveAllFiles() throws IOException {
+		 
+		 java.util.List<File> result = new java.util.ArrayList<File>();
+		 List request = service.files().list();
+
+		    do {
+		      try {
+		        FileList files = request.execute();
+
+		        result.addAll(files.getItems());
+		        request.setPageToken(files.getNextPageToken());
+		      } catch (IOException e) {
+		        System.out.println("An error occurred: " + e);
+		        request.setPageToken(null);
+		      }
+		    } while (request.getPageToken() != null &&
+		             request.getPageToken().length() > 0);
+
+		    return result;
+		  }
 
 }
